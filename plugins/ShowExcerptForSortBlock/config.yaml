@@ -1,0 +1,41 @@
+id: ShowExcerptForSortBlock
+name: ShowExcerptForSortBlock
+version: 0.0.1
+
+description: <__trans phrase="This plugin enables you to show excerpt while sorting blocks.">
+author_name: Taku Amano
+author_link: http://blog.taaas.jp/
+plugin_link: http://blog.taaas.jp/mt/mt-plugin-ShowExcerptForSortBlock/
+
+l10n_lexicon:
+  ja:
+    This plugin enables you to show excerpt while sorting blocks.: "ブロックのソート時に概要を表示します。"
+
+callbacks:
+  MT::App::CMS::template_param.edit_content_data: |
+    sub {
+      my ($cb, $app, $param, $tmpl) = @_;
+      $param->{js_include} .= q{
+        <script>
+        jQuery(document).on("click", 'a[href="#sort"]', function() {
+          jQuery('.blockeditor .mt-draggable').each(function(i, elm) {
+            var $c = jQuery("<div/>").appendTo(jQuery(".col", elm));
+
+            var text = (jQuery(".block-field", elm).text() || jQuery(".block-field textarea", elm).val() || "").substr(0, 20);
+            if (text) {
+              $c.text(text);
+              return;
+            }
+
+            var $imgs = jQuery(".block-field img", elm);
+            if ($imgs.length) {
+              $imgs.attr("width", 100);
+              $imgs.attr("height", "");
+              $c.append($imgs.clone());
+              return;
+            }
+          });
+        });
+        </script>
+      };
+    }
